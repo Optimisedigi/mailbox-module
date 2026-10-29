@@ -1,0 +1,450 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 0;
+  padding: 14px;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+  background: var(--mail-soft);
+}
+
+/* Expanded: the panel takes the whole mail area (the inbox panes are hidden
+   meanwhile) and the page scrolls; the Archive bar sticks to the bottom. */
+.full {
+  min-height: calc(100dvh - 140px);
+}
+
+/* Collapsed: one slim bar above the inbox; results are kept. */
+.collapsed {
+  padding: 8px 14px;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.body[hidden] {
+  display: none;
+}
+
+.headActions {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.collapsedSummary {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+}
+
+.muted {
+  color: var(--theme-elevation-500);
+  font-size: 13px;
+}
+
+.summary {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+
+.note {
+  margin: 0;
+  font-size: 13px;
+}
+
+.actions,
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -14px -14px;
+  padding: 10px calc(14px + var(--mailbox-corner-reserve, 0px)) 10px 14px;
+  border-top: 1px solid var(--mail-border);
+  background: var(--mail-soft);
+}
+
+.footer .muted {
+  margin-right: 8px;
+}
+
+.danger {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.btn {
+  padding: 7px 12px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.primary {
+  background: var(--mail-accent);
+  border-color: var(--mail-accent);
+  color: #fff;
+}
+
+.linkBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mail-accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+}
+
+.statValue {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.statLabel {
+  color: var(--theme-elevation-500);
+  font-size: 12px;
+}
+
+.stack {
+  display: flex;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--theme-elevation-100);
+}
+
+.stackPart {
+  min-width: 3px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+}
+
+.table,
+.senderTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table > thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--theme-elevation-50);
+  color: var(--theme-elevation-600);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--mail-border);
+}
+
+.group + .group > .categoryRow > *,
+.table > tfoot > tr > * {
+  border-top: 1px solid var(--mail-border);
+}
+
+.categoryRow:hover {
+  background: var(--theme-elevation-50);
+}
+
+.table > tfoot th,
+.table > tfoot td {
+  background: var(--theme-elevation-50);
+  font-weight: 700;
+}
+
+.num {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.checkCol {
+  width: 28px;
+  padding-right: 0 !important;
+}
+
+.shareCol {
+  width: 28%;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.bar {
+  display: inline-block;
+  width: calc(100% - 44px);
+  height: 8px;
+  margin-right: 8px;
+  overflow: hidden;
+  vertical-align: middle;
+  border-radius: 999px;
+  background: var(--theme-elevation-100);
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.shareText {
+  display: inline-block;
+  width: 36px;
+  color: var(--theme-elevation-600);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.categoryToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chevron {
+  width: 10px;
+  color: var(--theme-elevation-500);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  border-radius: 3px;
+}
+
+.detailRow > td {
+  padding: 0 0 8px 28px !important;
+  background: var(--theme-elevation-50);
+}
+
+.senderTable {
+  font-size: 12px;
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+}
+
+.senderTable th,
+.senderTable td {
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--mail-border);
+}
+
+.senderTable thead th {
+  border-top: 0;
+  color: var(--theme-elevation-500);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.kept {
+  opacity: 0.55;
+}
+
+.senderCell {
+  max-width: 260px;
+}
+
+.senderName {
+  display: block;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.senderAddress {
+  display: block;
+  color: var(--theme-elevation-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subjects {
+  color: var(--theme-elevation-650);
+  overflow-wrap: anywhere;
+}
+
+.more summary {
+  color: var(--mail-accent);
+  cursor: pointer;
+}
+
+.more ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+
+@media (max-width: 640px) {
+  .footer {
+    padding-right: 14px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .statValue {
+    font-size: 18px;
+  }
+
+  .shareCol {
+    display: none;
+  }
+
+  .detailRow > td {
+    padding-left: 0 !important;
+  }
+
+  .senderTable thead th:last-child,
+  .senderTable td.subjects {
+    display: none;
+  }
+}
+
+.input,
+.select {
+  padding: 7px 10px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+}
+
+.searchBar,
+.tagPicker,
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchBar .input {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.tagPicker .input {
+  width: 200px;
+  max-width: 100%;
+}
+
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--mail-border);
+  border-radius: 999px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tagChip:hover {
+  border-color: var(--mail-accent);
+}
+
+.tagCount {
+  color: var(--theme-elevation-500);
+  font-size: 12px;
+}
+
+.categoryCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}

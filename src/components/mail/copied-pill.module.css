@@ -1,0 +1,44 @@
+/* Double-click an address: a small pill rises off that spot, then fades. */
+.copiedPill {
+  position: absolute;
+  top: 1px;
+  z-index: 5;
+  margin: 0;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--theme-elevation-1000);
+  color: var(--theme-elevation-0);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: recipientCopied 1s ease forwards;
+}
+
+@keyframes recipientCopied {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  72% {
+    opacity: 1;
+    transform: translate(-50%, -6px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copiedPill {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -6px);
+  }
+}

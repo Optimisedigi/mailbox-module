@@ -1,0 +1,34 @@
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 0;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--theme-elevation-150, #e5e7eb);
+  border-top-color: var(--theme-elevation-800, #374151);
+  animation: mailSplashSpin 0.8s linear infinite;
+}
+
+.text {
+  font-size: 13px;
+  color: var(--theme-elevation-500, #6b7280);
+}
+
+@keyframes mailSplashSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}

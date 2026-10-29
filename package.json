@@ -1,0 +1,57 @@
+{
+  "name": "mailbox-module",
+  "version": "0.1.0",
+  "description": "A Gmail mailbox for Payload CMS + Next.js: inbox, compose, AI drafting, voice drafting, client matching, calendar invites and triage.",
+  "license": "MIT",
+  "type": "module",
+  "private": false,
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "migrate:create": "payload migrate:create",
+    "migrate": "payload migrate",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@lexical/html": "0.50.0",
+    "@lexical/link": "0.50.0",
+    "@lexical/list": "0.50.0",
+    "@lexical/markdown": "0.50.0",
+    "@lexical/react": "0.50.0",
+    "@lexical/rich-text": "0.50.0",
+    "@lexical/table": "0.50.0",
+    "@payloadcms/db-sqlite": "3.91.0",
+    "@payloadcms/next": "3.91.0",
+    "@payloadcms/ui": "3.91.0",
+    "googleapis": "171.4.0",
+    "graphql": "16.13.0",
+    "lexical": "0.50.0",
+    "next": "16.4.2",
+    "payload": "3.91.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@libsql/client": "0.14.0",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.4",
+    "drizzle-orm": "0.45.2",
+    "jsdom": "27.4.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.12"
+  }
+}

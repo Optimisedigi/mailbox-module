@@ -1,0 +1,1815 @@
+/* Gmail-style compose window docked bottom right. A host with its own floating
+   button in that corner sets --mailbox-corner-reserve (e.g. 96px) on :root. */
+.window {
+  position: fixed;
+  right: calc(16px + var(--mailbox-corner-reserve, 0px));
+  bottom: 0;
+  /* Above admin overlays and the client-email alert (99999). */
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  /* 22% larger than the original 560 x 640. */
+  width: min(683px, calc(100vw - 32px - var(--mailbox-corner-reserve, 0px)));
+  height: min(781px, calc(100vh - 80px));
+  border-radius: 10px 10px 0 0;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-1000);
+  box-shadow:
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12),
+    0 5px 5px -3px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  overflow: hidden;
+}
+
+.minimised {
+  height: auto;
+  width: min(320px, calc(100vw - 32px));
+}
+
+.expanded {
+  right: 50%;
+  bottom: 50%;
+  transform: translate(50%, 50%);
+  width: min(960px, calc(100vw - 48px));
+  height: min(820px, calc(100vh - 48px));
+  border-radius: 10px;
+}
+
+/* Popped out into its own browser window: the compose window is the whole page. */
+.popout {
+  inset: 0;
+  right: 0;
+  bottom: 0;
+  transform: none;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px 9px 16px;
+  background: var(--theme-elevation-100);
+  cursor: default;
+}
+
+.minimised .header {
+  cursor: pointer;
+}
+
+.title {
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 2px;
+}
+
+.headerButtons button {
+  width: 28px;
+  height: 26px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--theme-elevation-700);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.headerButtons button:hover {
+  background: var(--theme-elevation-150);
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.fields {
+  padding: 0 16px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--theme-elevation-100);
+}
+
+.field span {
+  color: var(--theme-elevation-500);
+  font-size: 13px;
+}
+
+.field input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+.recipientBox {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.recipientBox input {
+  width: 100%;
+}
+
+.recipientList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 264px;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+.recipientOption {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.recipientOption[aria-selected='true'] {
+  background: var(--theme-elevation-100);
+}
+
+/* "@" tag suggestions in the body. Lexical places the anchor at the caret on
+   <body>, so it must sit above the compose window (100000). */
+.mentionAnchor {
+  z-index: 100001;
+}
+
+.mentionList {
+  width: 300px;
+  max-width: calc(100vw - 16px);
+  max-height: 264px;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+  font-family: inherit;
+}
+
+.mentionOption {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.mentionOption[aria-selected='true'] {
+  background: var(--theme-elevation-100);
+}
+
+.mentionName,
+.mentionEmail,
+.mentionStatus {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mentionName {
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+.mentionEmail,
+.mentionStatus {
+  color: var(--theme-elevation-650);
+}
+
+.mentionStatus {
+  padding: 7px 12px;
+}
+
+.field .recipientName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--theme-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.field .recipientEmail {
+  font-size: 13px;
+  color: var(--theme-elevation-650);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ccToggle {
+  border: 0;
+  background: none;
+  color: var(--theme-elevation-500);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.aiSubject {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 6px;
+  background: none;
+  color: var(--theme-elevation-650);
+  font: inherit;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.aiSubject:hover:not(:disabled) {
+  border-color: var(--theme-elevation-400);
+  color: var(--theme-text);
+}
+
+.aiSubject:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.replyAllToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--theme-elevation-500);
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.replyAllToggle:hover,
+.replyAllToggle:focus-visible {
+  color: var(--theme-text);
+  background: var(--theme-elevation-100);
+}
+
+.replyAllOn {
+  color: #1a73e8;
+  background: var(--theme-elevation-100);
+}
+
+.content[hidden] {
+  display: none;
+}
+
+/* Body + signature fill the window and scroll together. */
+.draftScroll {
+  flex: 1;
+  min-height: 120px;
+  overflow-y: auto;
+}
+
+/* Rich editor; the placeholder sits over the empty body. */
+.editorShell {
+  position: relative;
+}
+
+.body {
+  min-height: 120px;
+  padding: 12px 16px;
+  border: 0;
+  outline: none;
+  background: none;
+  color: inherit;
+  /* Fixed, like Gmail's default: Verdana at "Normal" (Gmail writes it as the keyword small). */
+  font-family: Verdana, sans-serif;
+  font-size: small;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* Nothing in the body may change the font or size (tables, lists, pasted text). */
+.body * {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Text highlighted in the body stays marked while you type a request in the AI box (see HighlightKeeper). */
+.body *::highlight(mail-ai-selection) {
+  background-color: rgba(44, 151, 201, 0.28);
+  color: inherit;
+}
+
+.editorPlaceholder {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  left: 16px;
+  color: var(--theme-elevation-400);
+  pointer-events: none;
+  user-select: none;
+}
+
+.editorParagraph {
+  margin: 0;
+}
+
+.textBold {
+  font-weight: 700;
+}
+
+.textItalic {
+  font-style: italic;
+}
+
+.textUnderline {
+  text-decoration: underline;
+}
+
+.editorLink {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+
+/* Gmail's list look: visible markers (the admin's global reset hides them), a small
+   indent with the bullet sitting just inside the text edge, and a slight gap above and
+   below the list. Must match inlineEmailListStyles (src/lib/mail/gmail-html.ts). */
+.editorList,
+.editorListNumber {
+  margin: 6px 0;
+  padding: 0 0 0 22px;
+}
+
+.editorList {
+  list-style: disc outside;
+}
+
+.editorListNumber {
+  list-style: decimal outside;
+}
+
+/* Nested lists sit tight under their item, with Gmail's second-level markers. */
+.editorListItem .editorList,
+.editorListItem .editorListNumber {
+  margin: 0;
+}
+
+.editorListItem .editorList {
+  list-style-type: circle;
+}
+
+.editorListItem .editorListNumber {
+  list-style-type: lower-alpha;
+}
+
+.editorListItem {
+  display: list-item;
+  margin-left: 12px;
+  padding-left: 2px;
+}
+
+/* An item that only holds a nested list shows no marker of its own. */
+.editorNestedListItem {
+  list-style-type: none;
+}
+
+.editorNestedListItem::marker {
+  content: none;
+}
+
+.editorTable {
+  margin: 6px 0;
+  border-collapse: collapse;
+}
+
+.editorTableCell {
+  min-width: 60px;
+  padding: 4px 8px;
+  border: 1px solid var(--theme-elevation-400);
+  vertical-align: top;
+}
+
+.editorTableHeader {
+  background: var(--theme-elevation-100);
+  font-weight: 700;
+}
+
+/* Table formats (lib/mail/table-formats.ts; right-click a table to change it). These
+   mirror what inlineEmailTableStyles writes into the sent email. No attribute is the grid above. */
+.editorTable[data-table-format='report'] .editorTableCell {
+  min-width: 0;
+  padding: 6px 10px;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
+  color: #222;
+  font-size: 13px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.editorTable[data-table-format='report'] .editorTableHeader {
+  padding: 8px 12px;
+  border-bottom: 2px solid #e5e7eb;
+  background: #f1f5f9;
+  color: #64748b;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.editorTable[data-table-format='report'] .editorTableCell:first-child {
+  text-align: left;
+}
+
+.editorTable[data-table-format='grid'] .editorTableHeader {
+  background: #f1f5f9;
+}
+
+.editorTable[data-table-format='minimal'] .editorTableCell {
+  padding: 6px 16px 6px 0;
+  border: 0;
+}
+
+.editorTable[data-table-format='minimal'] .editorTableHeader {
+  border-bottom: 1px solid currentColor;
+  background: none;
+}
+
+/* Dark admin theme: the same structure in theme colours, so text stays readable. */
+:global(html[data-theme='dark']) .editorTable[data-table-format='report'] .editorTableCell {
+  border-bottom-color: var(--theme-elevation-150);
+  color: var(--theme-text);
+}
+
+:global(html[data-theme='dark']) .editorTable[data-table-format='grid'] .editorTableHeader {
+  background: var(--theme-elevation-100);
+}
+
+:global(html[data-theme='dark']) .editorTable[data-table-format='report'] .editorTableHeader {
+  border-bottom-color: var(--theme-elevation-150);
+  background: var(--theme-elevation-100);
+  color: var(--theme-elevation-600);
+}
+
+/* "⋯" right above the selected table column and "⋮" right of the selected row, drawn in
+   the editor shell so they scroll with the table (EmailTableActionsPlugin). */
+.tableHandles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+}
+
+.tableHandle {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--theme-elevation-250);
+  border-radius: 4px;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-800);
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+  cursor: pointer;
+}
+
+.tableHandle:hover,
+.tableHandle[aria-expanded='true'] {
+  background: var(--theme-elevation-100);
+}
+
+.tableHandle:focus-visible,
+.tableMenuItem:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 1px;
+}
+
+.tableMenu {
+  position: fixed;
+  z-index: 100002;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 4px 0;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+.tableMenuItem {
+  margin: 0;
+  padding: 7px 14px;
+  border: 0;
+  background: none;
+  color: var(--theme-text);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tableMenuItem:hover,
+.tableMenuItem:focus {
+  background: var(--theme-elevation-100);
+}
+
+/* Format choices (menuitemradio): a check column, so the labels line up. */
+.tableMenuItem[role='menuitemradio'] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline-start: 10px;
+}
+
+.tableMenuCheck {
+  flex-shrink: 0;
+}
+
+.tableMenuSeparator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--theme-elevation-150);
+}
+
+.tableMenuLabel {
+  padding: 4px 14px 2px;
+  color: var(--theme-elevation-600);
+  font-size: 12px;
+}
+
+@media (pointer: coarse) {
+  .tableMenuItem {
+    min-height: 44px;
+  }
+}
+
+@media (forced-colors: active) {
+  .tableHandle,
+  .tableMenu {
+    border-color: CanvasText;
+  }
+}
+
+/* Colour / numbered / bulleted list buttons, in the tool row after Insert table. */
+.formatBar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+  padding-left: 4px;
+  border-left: 1px solid var(--theme-elevation-150);
+}
+
+.formatButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 3px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--theme-elevation-800);
+  font: inherit;
+  cursor: pointer;
+}
+
+.formatButton:hover:not(:disabled) {
+  background: var(--theme-elevation-100);
+}
+
+.formatButton[aria-pressed='true'],
+.formatButton[aria-expanded='true'] {
+  background: var(--theme-elevation-150);
+}
+
+.formatButton:focus-visible,
+.colorCell:focus-visible,
+.colorDefault:focus-visible {
+  outline: 2px solid #2c97c9;
+  outline-offset: 1px;
+}
+
+.formatButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.colorPicker {
+  position: relative;
+}
+
+.colorGlyph {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Verdana, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.colorSwatchBar {
+  width: 16px;
+  height: 3px;
+  margin-top: 2px;
+  border: 1px solid var(--theme-elevation-200);
+}
+
+.caret {
+  font-size: 10px;
+}
+
+/* Portalled to <body>, opening upward from the button (left/bottom set inline). */
+.colorPalette {
+  position: fixed;
+  z-index: 100001;
+  padding: 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* Cmd/Ctrl+K link box (EmailLinkPlugin), portalled to <body> under the selection. */
+.linkDialog {
+  position: fixed;
+  z-index: 100001;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  padding: 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+}
+
+.linkDialog form {
+  display: flex;
+  gap: 6px;
+}
+
+.linkInput {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 4px;
+  background: var(--theme-elevation-0);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+}
+
+.linkInput[aria-invalid='true'] {
+  border-color: #d93025;
+}
+
+.linkButton {
+  padding: 5px 10px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.linkButton:hover {
+  background: var(--theme-elevation-100);
+}
+
+.linkError {
+  margin: 6px 0 0;
+  color: #d93025;
+  font-size: 12px;
+}
+
+.colorDefault {
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 4px 6px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.colorDefault:hover {
+  background: var(--theme-elevation-100);
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(8, 18px);
+  gap: 3px;
+}
+
+.colorCell {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.colorCell:hover {
+  transform: scale(1.15);
+}
+
+.colorCell[aria-pressed='true'] {
+  outline: 2px solid #0b57d0;
+  outline-offset: 1px;
+}
+
+/* Undo history and the attach/image/table buttons share one row above the prompt. */
+.aiTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.toolButton {
+  padding: 3px 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.toolButton:hover {
+  background: var(--theme-elevation-100);
+}
+
+/* Attach files / Insert image: icon only (the name is the aria-label and tooltip). */
+.iconButton {
+  min-width: 32px;
+  font-size: 15px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.toolButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.tablePicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.tablePicker label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tablePicker input {
+  width: 48px;
+  padding: 2px 4px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 4px 16px;
+  list-style: none;
+}
+
+.attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 2px 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.attachment .signatureLabel {
+  display: inline;
+  margin: 0;
+}
+
+.attachmentName {
+  overflow: hidden;
+  max-width: 220px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "•••" under a reply: shows the email being replied to, editable for notes. */
+.quote {
+  padding: 0 16px 10px;
+}
+
+.quoteToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 18px;
+  padding: 0 6px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 9px;
+  background: var(--theme-elevation-50);
+  color: var(--theme-elevation-600);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.quoteToggle:hover,
+.quoteToggle:focus-visible {
+  border-color: #2c97c9;
+  color: #2c97c9;
+}
+
+.quoteToggleOpen {
+  border-color: #2c97c9;
+  background: rgba(44, 151, 201, 0.12);
+  color: #2c97c9;
+}
+
+.quoteBody {
+  margin-top: 8px;
+}
+
+.quoteHeader {
+  margin: 0 0 4px;
+  color: var(--theme-elevation-600);
+  font-family: Verdana, sans-serif;
+  font-size: small;
+}
+
+/* Gmail's quote look: a thin grey bar on the left. */
+.quoteEditor {
+  margin-left: 0.8ex;
+  padding-left: 1ex;
+  border-left: 1px solid var(--theme-elevation-200);
+}
+
+.quoteEditor .body {
+  min-height: 60px;
+  padding: 4px 0;
+}
+
+.quoteEditor .editorPlaceholder {
+  top: 4px;
+  left: 0;
+}
+
+/* Voice drafting mic, next to Write with AI. */
+.voice {
+  display: inline-flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.signature {
+  padding: 0 16px 12px;
+}
+
+/* The signature's sign-off, editable per email, in the body font (Verdana, Normal). */
+.signOff {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 2px;
+  padding: 2px;
+  overflow: hidden;
+  border: 1px dashed transparent;
+  border-radius: 4px;
+  outline: none;
+  resize: none;
+  background: none;
+  color: inherit;
+  font-family: Verdana, sans-serif;
+  font-size: small;
+  line-height: 1.5;
+}
+
+.signOff:hover {
+  border-color: var(--theme-elevation-200);
+}
+
+.signOff:focus {
+  border-color: #2c97c9;
+}
+
+.signatureLabel {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--theme-elevation-500);
+  font-size: 12px;
+}
+
+.ai {
+  padding: 10px 16px 6px;
+  border-top: 1px solid var(--theme-elevation-100);
+  background: var(--theme-elevation-50);
+}
+
+.promptRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.prompt {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  resize: none;
+  background: var(--theme-elevation-0);
+  color: inherit;
+  font: inherit;
+  line-height: 1.4;
+}
+
+.aiButton {
+  padding: 8px 14px;
+  border: 1px solid #2c97c9;
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  color: #2c97c9;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Undo the last AI change: quieter than Revise, next to it. */
+.aiUndo {
+  padding: 8px 10px;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-800);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.aiUndo:hover:not(:disabled) {
+  border-color: var(--theme-elevation-400);
+}
+
+.aiUndo:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.note {
+  margin: 0;
+  padding: 6px 16px;
+  color: var(--theme-elevation-700);
+  font-size: 13px;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 8px;
+}
+
+.schedulePicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--theme-elevation-100);
+  font-size: 12px;
+}
+
+/* Today / Tomorrow and the quick send times: compact pills. */
+.scheduleQuick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.pill {
+  padding: 3px 9px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.pill:hover:not(:disabled) {
+  background: var(--theme-elevation-100);
+}
+
+.pill[aria-pressed='true'] {
+  border-color: #0b57d0;
+  background: rgba(11, 87, 208, 0.1);
+  color: #0b57d0;
+}
+
+.quickTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.plusTwo {
+  padding: 2px 6px;
+  border: 1px dashed var(--theme-elevation-200);
+  border-radius: 999px;
+  background: none;
+  color: var(--theme-elevation-700);
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.plusTwo:hover:not(:disabled) {
+  background: var(--theme-elevation-100);
+}
+
+.pill:focus-visible,
+.plusTwo:focus-visible,
+.calendarNav:focus-visible,
+.calendarDay:focus-visible {
+  outline: 2px solid #0b57d0;
+  outline-offset: 2px;
+}
+
+.pill:disabled,
+.plusTwo:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Calendar (shadcn / react-day-picker look). */
+.calendar {
+  width: fit-content;
+  padding: 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Inside the date and time panel, which draws the frame. */
+.calendarBare {
+  width: fit-content;
+}
+
+.calendarCaption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  margin-bottom: 4px;
+}
+
+.calendarLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.calendarNav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--theme-elevation-500);
+  cursor: pointer;
+}
+
+.calendarNav:hover:not(:disabled) {
+  background: var(--theme-elevation-100);
+  color: var(--theme-elevation-1000);
+}
+
+.calendarNav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.calendarGrid {
+  border-collapse: collapse;
+}
+
+.calendarWeekday {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--theme-elevation-500);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.calendarCell {
+  padding: 0;
+}
+
+.calendarDay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--theme-elevation-1000);
+  font: inherit;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 150ms,
+    background-color 150ms;
+}
+
+.calendarDay:hover:not(:disabled) {
+  background: var(--theme-elevation-100);
+}
+
+.calendarOutside {
+  color: var(--theme-elevation-300);
+}
+
+.calendarDay:disabled {
+  color: var(--theme-elevation-300);
+  text-decoration: line-through;
+  pointer-events: none;
+}
+
+.calendarDay[aria-pressed='true'] {
+  background: #0b57d0;
+  color: #fff;
+}
+
+/* Dot under today. */
+.calendarToday::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #0b57d0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.calendarToday[aria-pressed='true']::after {
+  background: #fff;
+}
+
+.calendarToday:disabled::after {
+  background: var(--theme-elevation-300);
+}
+
+.send {
+  padding: 6px 22px;
+  border: 0;
+  border-radius: 18px;
+  background: #0b57d0;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Delete-draft trash icon, pushed to the far right of the footer like Gmail. */
+.trash {
+  display: inline-flex;
+  margin-left: auto;
+  padding: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--theme-elevation-500);
+  cursor: pointer;
+}
+
+.trash:hover:not(:disabled) {
+  background: var(--theme-elevation-50);
+  color: #e5484d;
+}
+
+.trash:focus-visible {
+  outline: 2px solid #2c97c9;
+  outline-offset: 2px;
+}
+
+.trash:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Phone bottom row: Schedule send and the ⋯ menu as round icon buttons. */
+.roundIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 50%;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-800);
+  cursor: pointer;
+}
+
+.roundIcon[aria-expanded='true'] {
+  border-color: #0b57d0;
+  color: #0b57d0;
+}
+
+.roundIcon:focus-visible,
+.moreItem:focus-visible {
+  outline: 2px solid #2c97c9;
+  outline-offset: 2px;
+}
+
+.roundIcon:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.more {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.moreMenu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  padding: 4px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.moreItem {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.moreItem:hover:not(:disabled) {
+  background: var(--theme-elevation-50);
+}
+
+.moreItem:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.secondary {
+  padding: 5px 14px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 18px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Undo send: Send shows a spinner while the email waits to go. */
+.send[aria-busy='true'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: composeSpin 0.8s linear infinite;
+}
+
+@keyframes composeSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+.undoSend {
+  padding: 5px 16px;
+  border: 1px solid #0b57d0;
+  border-radius: 18px;
+  background: var(--theme-elevation-0);
+  color: #0b57d0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  animation: composePop 0.15s ease-out;
+}
+
+.undoSend:hover {
+  background: rgba(11, 87, 208, 0.08);
+}
+
+.undoSend:focus-visible {
+  outline: 2px solid #0b57d0;
+  outline-offset: 2px;
+}
+
+@keyframes composePop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Shown while files are dragged over the window. */
+.dropOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #0b57d0;
+  border-radius: inherit;
+  background: rgba(11, 87, 208, 0.08);
+  color: #0b57d0;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Inline image in the body: click to select, drag the corner to resize. */
+.imageFrame {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: bottom;
+}
+
+.imageSelected img {
+  outline: 2px solid #1a73e8;
+  outline-offset: 1px;
+}
+
+.imageHandle {
+  position: absolute;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #fff;
+  background: #1a73e8;
+  touch-action: none;
+}
+
+.imageHandle_nw {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+
+.imageHandle_ne {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+
+.imageHandle_sw {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+
+.imageHandle_se {
+  right: -5px;
+  bottom: -5px;
+  cursor: nwse-resize;
+}
+
+/* Width readout while dragging. */
+.imageSize {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.send:disabled,
+.secondary:disabled,
+.aiButton:disabled,
+.linkBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Sending is a loading state, not a disabled one. */
+.send[aria-busy='true']:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+
+.linkBtn {
+  border: 0;
+  background: none;
+  color: #2c97c9;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .window,
+  .expanded {
+    right: 0;
+    bottom: 0;
+    transform: none;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .minimised {
+    height: auto;
+  }
+
+  /* Same controls as desktop, sized for thumbs. */
+  .header {
+    padding: calc(6px + env(safe-area-inset-top)) 8px 6px 16px;
+  }
+
+  .minimised .header {
+    padding-top: 6px;
+  }
+
+  .headerButtons button {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .field input,
+  .tablePicker input,
+  .prompt {
+    font-size: 16px; /* stops iOS zooming on focus */
+  }
+
+  .field input {
+    min-height: 44px;
+  }
+
+  .formatButton {
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .colorGrid {
+    grid-template-columns: repeat(8, 28px);
+  }
+
+  .colorCell {
+    width: 28px;
+    height: 28px;
+  }
+
+  .recipientOption,
+  .mentionOption {
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .ccToggle,
+  .replyAllToggle {
+    min-height: 44px;
+    padding: 0 8px;
+  }
+
+  /* Attach / image / table + Use whole thread scroll sideways instead of wrapping. */
+  .aiTools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .aiTools::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toolbar {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  .toolButton {
+    flex-shrink: 0;
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .iconButton {
+    min-width: 44px;
+  }
+
+  .promptRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .prompt {
+    min-height: 56px;
+  }
+
+  /* The AI button shares the bottom row with the voice toggle, Undo (an
+     icon), schedule and Send. It never shrinks below its label, so Revise is
+     always shown in full; it takes any spare width. */
+  .footer .aiButton {
+    flex: 1 0 auto;
+    min-height: 44px;
+    padding: 0 10px;
+    font-size: 15px;
+  }
+
+  .footer .aiUndo {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .threadToggle {
+    flex-shrink: 0;
+    min-height: 40px;
+    margin: 0 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .threadToggle input {
+    width: 20px;
+    height: 20px;
+  }
+
+  .schedulePicker {
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .pill,
+  .plusTwo {
+    min-height: 40px;
+  }
+
+  /* One row (voice, Undo, AI, schedule, Send, ⋯) kept above the keyboard /
+     home indicator. Sized so all six fit a 360px screen with Revise in full. */
+  .footer {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--theme-elevation-100);
+    background: var(--theme-elevation-0);
+  }
+
+  .imageHandle {
+    width: 18px;
+    height: 18px;
+  }
+
+  .imageHandle_nw,
+  .imageHandle_ne {
+    top: -9px;
+  }
+
+  .imageHandle_sw,
+  .imageHandle_se {
+    bottom: -9px;
+  }
+
+  .imageHandle_nw,
+  .imageHandle_sw {
+    left: -9px;
+  }
+
+  .imageHandle_ne,
+  .imageHandle_se {
+    right: -9px;
+  }
+
+  .undoSend {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  .send {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+
+  .secondary {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 8px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+.threadToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: var(--theme-elevation-800);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.threadToggle input {
+  margin: 0;
+  cursor: pointer;
+}
+
+.threadToggle + .threadToggle {
+  margin-left: 12px;
+}
+
+.followUp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--theme-elevation-800);
+  font-size: 13px;
+}
+
+.followUp select {
+  min-height: 32px;
+  padding: 2px 6px;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 4px;
+  background: var(--theme-elevation-0);
+  color: inherit;
+  font: inherit;
+}
+
+.clientDataNote {
+  margin: 4px 0 0;
+  color: var(--theme-elevation-600);
+  font-size: 12px;
+}
+
+/* A generated report block (EmailHtmlBlockNode): shown as sent, not editable. */
+.preservedBlock {
+  margin: 6px 0;
+  border: 1px dashed var(--theme-elevation-200);
+  border-radius: 6px;
+  background: #fff;
+  user-select: none;
+}
+
+.preservedBlockBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px dashed var(--theme-elevation-200);
+  color: var(--theme-elevation-500);
+  font-size: 11px;
+}
+
+.preservedBlockBar button {
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}

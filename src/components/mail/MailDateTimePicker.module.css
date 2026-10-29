@@ -1,0 +1,188 @@
+/* Date and time picker: two boxes and one panel (calendar + times).
+   Theme colours only, with the calendar's blue, so it works in the compose
+   window and the invite pop-up alike. */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  /* Sits under form labels that are bold and muted; the picker sets its own. */
+  color: var(--theme-elevation-1000);
+  font-weight: 400;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The whole box opens the panel, not just an icon. */
+.box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-1000);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.box svg {
+  flex-shrink: 0;
+  color: var(--theme-elevation-500);
+}
+
+.box:hover:not(:disabled) {
+  border-color: var(--theme-elevation-300);
+}
+
+.box[aria-expanded='true'] {
+  border-color: #0b57d0;
+  box-shadow: 0 0 0 1px #0b57d0;
+}
+
+.box[aria-expanded='true'] svg {
+  color: #0b57d0;
+}
+
+.box:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.box:focus-visible,
+.typed:focus-visible,
+.list:focus-visible {
+  outline: 2px solid #0b57d0;
+  outline-offset: 2px;
+}
+
+.panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Beside the calendar; under it, full width, when there is no room. */
+.times {
+  display: flex;
+  flex: 1 1 132px;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 132px;
+  padding-inline-start: 12px;
+  border-inline-start: 1px solid var(--theme-elevation-100);
+}
+
+.typedLabel {
+  color: var(--theme-elevation-500);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.typed {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-1000);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.typed[aria-invalid='true'] {
+  border-color: #e5484d;
+}
+
+.typedError {
+  color: #e5484d;
+  font-size: 11px;
+}
+
+.list {
+  flex: 1;
+  height: 228px;
+  margin: 4px 0 0;
+  padding: 2px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 6px;
+  list-style: none;
+}
+
+.option {
+  padding: 6px 10px;
+  font-weight: 400;
+  border-radius: 6px;
+  color: var(--theme-elevation-800);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* On-the-hour times read a little stronger, so the list scans by hour. */
+.optionHour {
+  color: var(--theme-elevation-1000);
+  font-weight: 600;
+}
+
+.optionActive {
+  background: var(--theme-elevation-100);
+}
+
+.option[aria-selected='true'] {
+  background: #0b57d0;
+  color: #fff;
+}
+
+.option[aria-disabled='true'] {
+  color: var(--theme-elevation-300);
+  text-decoration: line-through;
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .panel {
+    width: 100%;
+  }
+
+  .times {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+
+  .list {
+    height: 176px;
+  }
+
+  .box,
+  .typed {
+    min-height: 40px;
+    font-size: 16px;
+  }
+
+  .option {
+    padding: 10px 12px;
+  }
+}

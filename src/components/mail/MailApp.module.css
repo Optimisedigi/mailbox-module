@@ -1,0 +1,1667 @@
+/* .replyBar is portalled to <body>, outside .app, so it needs the tokens too. */
+.app,
+.replyBar {
+  --mail-border: var(--theme-elevation-100);
+  --mail-soft: var(--theme-elevation-50);
+  --mail-text: var(--theme-elevation-1000);
+  --mail-muted: var(--theme-elevation-500);
+  --mail-accent: #2c97c9;
+  /* Mail header (tab bar) design tokens. */
+  --mh-ink: #14171f;
+  --mh-ink-2: #5b6270;
+  --mh-muted: #7a8190;
+  --mh-line: #e6e8ec;
+  --mh-control-border: #e3e6ea;
+  --mh-surface: #fff;
+  --mh-hover: #f6f7f9;
+  --mh-badge: #eef0f3;
+  --mh-accent: #2f80c4;
+  --mh-accent-hover: #2672b3;
+  --mh-accent-soft: #e8f1fa;
+  --mh-accent-ink: #1f6aa8;
+  --mh-ai: #8a6fd0;
+  --mh-ok: #2fa36b;
+  --mh-warn: #e0a526;
+}
+
+:global(html[data-theme='dark']) .app {
+  --mh-ink: var(--theme-elevation-1000);
+  --mh-ink-2: var(--theme-elevation-700);
+  --mh-muted: var(--theme-elevation-500);
+  --mh-line: var(--theme-elevation-150);
+  --mh-control-border: var(--theme-elevation-200);
+  --mh-surface: var(--theme-elevation-50);
+  --mh-hover: var(--theme-elevation-100);
+  --mh-badge: var(--theme-elevation-100);
+  --mh-accent-soft: rgba(47, 128, 196, 0.2);
+  --mh-accent-ink: #8cc4f0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  color: var(--mail-text);
+  font-size: 14px;
+}
+
+.tabbar {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  height: 52px;
+  border-bottom: 1px solid var(--mh-line);
+  color: var(--mh-ink);
+}
+
+.tabGroup {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.tabDivider {
+  width: 1px;
+  margin: 14px 0;
+  background: var(--mh-line);
+}
+
+.tabSpacer {
+  flex: 1;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  color: var(--mh-ink-2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab svg {
+  flex: none;
+}
+
+.tab:hover {
+  color: var(--mh-ink);
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.tab.folderActive,
+.tab.tabOn {
+  color: var(--mh-ink);
+}
+
+.tab.folderActive::after,
+.tab.tabOn::after {
+  background: var(--mh-accent);
+}
+
+.tab.tabAi.tabOn::after {
+  background: var(--mh-ai);
+}
+
+.tabBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: var(--mh-badge);
+  color: var(--mh-ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.folderActive .tabBadge,
+.tabOn .tabBadge {
+  background: var(--mh-accent-soft);
+  color: var(--mh-accent-ink);
+}
+
+.tabActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.syncStatus {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--mh-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.syncDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mh-ok);
+}
+
+.syncStatusBusy .syncDot {
+  background: var(--mh-warn);
+}
+
+/* Header buttons: secondary (white, bordered), icon-only and primary. */
+.headBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--mh-control-border);
+  border-radius: 8px;
+  background: var(--mh-surface);
+  color: var(--mh-ink);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.headBtn svg {
+  flex: none;
+}
+
+.headBtn:hover {
+  background: var(--mh-hover);
+}
+
+.headBtn:disabled {
+  cursor: default;
+}
+
+.headBtnIcon {
+  justify-content: center;
+  width: 32px;
+  padding: 0;
+  color: #4b5260;
+}
+
+.headBtnSpin svg {
+  animation: mailHeadSpin 0.8s linear infinite;
+}
+
+@keyframes mailHeadSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headBtnSpin svg {
+    animation: none;
+  }
+}
+
+.headBtnPrimary {
+  padding: 0 14px;
+  border: 0;
+  background: var(--mh-accent);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
+  color: #fff;
+  font-weight: 600;
+}
+
+.headBtnPrimary:hover {
+  background: var(--mh-accent-hover);
+}
+
+.draftTag {
+  margin-right: 6px;
+  color: #e5484d;
+  font-weight: 600;
+}
+
+/* Search, at the top of the email list. */
+.search {
+  flex-shrink: 0;
+  padding: 8px;
+  border-bottom: 1px solid var(--mail-border);
+}
+
+.searchBox {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.searchList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 264px;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+.searchOption {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.searchOption[aria-selected='true'] {
+  background: var(--theme-elevation-100);
+}
+
+.searchOptionName,
+.searchOptionEmail {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.searchOptionName {
+  font-weight: 600;
+  color: var(--mail-text);
+}
+
+.searchOptionEmail {
+  color: var(--mail-muted);
+}
+
+.search input,
+.field input,
+.instruction,
+.assign select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+}
+
+.muted {
+  color: var(--mail-muted);
+  font-size: 13px;
+}
+
+/* The Inbox search box is grey so it stands out from the white list. */
+.search input {
+  background: var(--theme-elevation-100);
+  border-color: var(--theme-elevation-150);
+}
+
+.search input:focus {
+  background: var(--theme-elevation-0);
+}
+
+.btn {
+  padding: 7px 12px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:disabled,
+.linkBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.primary {
+  background: var(--mail-accent);
+  border-color: var(--mail-accent);
+  color: #fff;
+}
+
+.linkBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mail-accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e5484d;
+  border-radius: 8px;
+  background: rgba(229, 72, 77, 0.08);
+}
+
+.error > span {
+  flex: 1;
+}
+
+.errorText {
+  color: #e5484d;
+}
+
+.note {
+  margin: 4px 0;
+  color: var(--mail-muted);
+}
+
+/* The panes fill the viewport and stick to its top once the toolbar scrolls
+   away, so the inbox list stays in view while the reading pane scrolls on its own. */
+.panes {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr;
+  gap: 16px;
+  height: 100vh;
+  height: 100dvh;
+  padding: 12px 0;
+}
+
+/* Left pane: the search box above the scrolling email list. */
+/* Single-email window ("Open in new window"): the reading pane only. */
+.appWindow {
+  padding: 0 16px;
+}
+
+.panes.panesWindow {
+  grid-template-columns: 1fr;
+}
+
+.listPane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+/* Load more sits at the very bottom of the list, even when the list is short. */
+.moreItem {
+  margin-top: auto;
+}
+
+.rowItem {
+  position: relative;
+  /* Long lists (many "load more" pages): rows off screen skip layout and paint. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+}
+
+/* Inbox rows: a tick box for bulk actions, then the row itself. */
+.rowItemSelectable {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--mail-soft);
+}
+
+.rowItemSelectable .row {
+  flex: 1;
+  min-width: 0;
+  padding-left: 4px;
+  border-bottom: 0;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn:hover {
+  color: #e5484d;
+}
+
+.deleteBtn,
+.deleteBtn:hover {
+  color: #800000;
+}
+
+.rowCheck {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 4px 0 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rowCheck input {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.bulkBar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--mail-border);
+  background: var(--mail-soft);
+}
+
+.selectAllBar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--mail-soft);
+  font-size: 13px;
+}
+
+p.bulkBar {
+  margin: 0;
+  color: var(--mail-muted);
+}
+
+.bulkCount {
+  margin-right: auto;
+  font-weight: 600;
+}
+
+/* The selection toolbar: a quiet count and compact actions on one row. */
+.bulkBar[role='toolbar'] {
+  gap: 6px;
+}
+
+.bulkBar[role='toolbar'] .bulkCount {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mail-muted);
+  white-space: nowrap;
+}
+
+.bulkBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* Icon-only bin: a square button the same height as the text buttons beside it. */
+.bulkDelete {
+  justify-content: center;
+  min-width: 26px;
+  padding: 4px 6px;
+  color: #b42318;
+}
+
+.deleteDraft,
+.rowDelete {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  padding: 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--mail-muted);
+  cursor: pointer;
+}
+
+.deleteDraft:hover,
+.rowDelete:hover {
+  background: var(--mail-soft);
+  color: #e5484d;
+}
+
+/* Read/unread toggle, stacked just above the row's delete button. */
+.rowRead {
+  position: absolute;
+  right: 8px;
+  bottom: 32px;
+  display: inline-flex;
+  padding: 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--mail-muted);
+  cursor: pointer;
+}
+
+.rowRead:hover {
+  background: var(--mail-soft);
+  color: var(--mail-accent);
+}
+
+.rowRead:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Keep the subject and snippet clear of the two row buttons. */
+.rowItem:has(.rowRead) .subject,
+.rowItem:has(.rowRead) .snippet {
+  padding-right: 22px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--mail-soft);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:hover {
+  background: var(--mail-soft);
+}
+
+.selected {
+  background: rgba(44, 151, 201, 0.12);
+}
+
+.rowTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Sender name with the client pill beside it; the name truncates first. */
+.senderLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.senderLine .sender {
+  min-width: 0;
+}
+
+.senderLine .badge {
+  align-self: center;
+  flex-shrink: 0;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sender,
+.subject,
+.snippet {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unread .sender,
+.unread .subject {
+  font-weight: 700;
+}
+
+.unread .sender::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--mail-accent);
+  vertical-align: middle;
+}
+
+.count {
+  margin-left: 6px;
+  color: var(--mail-muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.date {
+  flex-shrink: 0;
+  color: var(--mail-muted);
+  font-size: 12px;
+}
+
+/* The time on each email in the Inbox list. */
+.row .date {
+  color: #1a73e8;
+}
+
+.snippet {
+  color: var(--mail-muted);
+  font-size: 13px;
+}
+
+.badge {
+  align-self: flex-start;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(44, 151, 201, 0.14);
+  color: var(--mail-accent);
+  font-size: 12px;
+}
+
+.empty {
+  padding: 16px;
+  color: var(--mail-muted);
+}
+
+/* The list's loading state (MailSplash), centred in the panel. */
+.listLoading {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.more {
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  background: none;
+  color: var(--mail-accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+.reader {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Mobile: list full-width; the reading pane is a full-screen panel that
+   slides in from the right over the list. */
+.mobileBar,
+.replyBar {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .app {
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+
+  .btn,
+  .linkBtn {
+    min-height: 40px;
+  }
+
+  .linkBtn {
+    padding: 0 4px;
+  }
+
+  .panes {
+    position: static;
+    display: block;
+    height: auto;
+    padding: 0;
+  }
+
+  .listPane {
+    overflow: visible;
+  }
+
+  .list {
+    max-height: none;
+  }
+
+  .row {
+    min-height: 64px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .reader {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    padding: 0 12px calc(84px + env(safe-area-inset-bottom));
+    background: var(--theme-bg, var(--theme-elevation-0));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+
+  .readerOpen {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.25s ease, visibility 0s;
+  }
+
+  .mobileBar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 -12px 8px;
+    padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
+    background: var(--theme-bg, var(--theme-elevation-0));
+    border-bottom: 1px solid var(--mail-border);
+  }
+
+  .backBtn {
+    min-height: 44px;
+    padding: 0 12px 0 4px;
+    border: 0;
+    background: none;
+    color: var(--mail-accent);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Reply, Reply all, Forward, Delete and More: one bar fixed to the bottom
+     of the screen, clear of --mailbox-corner-reserve on the right. Fixed, not sticky:
+     it is portalled to <body> (the reader's slide-in transform would carry a
+     fixed child with it), and iOS Safari adds a scroll container's padding to
+     a sticky child's offset. Above the reader (z-index 60). */
+  .replyBar {
+    position: fixed;
+    left: 12px;
+    right: calc(12px + var(--mailbox-corner-reserve, 0px));
+    bottom: 34px;
+    z-index: 61;
+    display: flex;
+    box-sizing: border-box;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--mail-border);
+    border-radius: 14px;
+    background: var(--theme-bg, var(--theme-elevation-0));
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .barBtn {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 2px;
+    border: 0;
+    border-radius: 11px;
+    background: transparent;
+    color: var(--mail-text);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .barBtn:active {
+    background: var(--mail-soft);
+  }
+
+  .barPrimary,
+  .barPrimary:active {
+    background: var(--mail-accent);
+    color: #fff;
+  }
+
+  .barDelete {
+    color: #b42318;
+  }
+
+  .replyBar > .overflow {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .replyBar .barBtn[aria-expanded='true'] {
+    background: var(--mail-soft);
+  }
+
+  /* Out of the way while the nav drawer or a bottom sheet is open. */
+  :global(body:has(.nav--nav-open)) .replyBar,
+  :global(body:has([data-sheet='bottom'])) .replyBar {
+    display: none;
+  }
+
+  .readerHead .actions {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  /* With the action bar, the header is the subject and the ⋯ menu (which
+     must not be clipped by a scrolling row). */
+  .readerHeadPhone {
+    align-items: center;
+  }
+
+  .readerHeadPhone .threadSubject {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .readerHeadPhone .actions {
+    flex-wrap: wrap;
+    width: auto;
+    margin-left: auto;
+    overflow: visible;
+  }
+
+  .messageHead {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* Give the email itself the full screen width on phones. */
+  .message {
+    margin: 8px -12px 0;
+    padding: 10px 12px;
+    border-width: 1px 0 0;
+    border-radius: 0;
+  }
+
+  .search input,
+  .instruction,
+  .assign select {
+    font-size: 16px; /* stops iOS zooming on focus */
+  }
+}
+
+/* Lock the page behind the open reader so only the panel scrolls. */
+.appReaderOpen {
+  --mail-reader-open: 1;
+}
+
+.readerHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.threadSubject {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.message {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+}
+
+.messageHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.messageFoot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.assign {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assign select {
+  width: auto;
+  padding: 4px 8px;
+}
+
+.assign {
+  flex-wrap: wrap;
+}
+
+.clientPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-basis: 100%;
+  order: 1;
+  max-height: 240px;
+  margin: 0;
+  padding: 6px 10px;
+  overflow-y: auto;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+}
+
+.clientPicker legend {
+  padding: 0 4px;
+  color: var(--mail-muted);
+  font-size: 13px;
+}
+
+.clientPicker label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+  background: var(--mail-soft);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 15px;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.aiRow {
+  display: flex;
+  gap: 8px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.hiddenList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hiddenList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--mail-border);
+}
+
+.hiddenNote summary {
+  cursor: pointer;
+}
+
+.hiddenNoteBody {
+  margin-left: 6px;
+  color: var(--mail-muted);
+  font-size: 13px;
+}
+
+.hiddenNote {
+  display: inline-block;
+}
+
+/* Client senders: star marker in inbox rows and the "★ Client" toggle. */
+.star {
+  color: #d97706;
+  font-weight: 400;
+}
+
+.starred {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* Scheduled tab: same two panes as Drafts (queue left, the open email right). */
+.scheduledTag {
+  margin-right: 6px;
+  color: #0b57d0;
+  font-weight: 600;
+}
+
+/* The sign-off as it will be sent (Verdana, Normal), under the body preview. */
+.scheduledSignOff {
+  margin: 8px 2px 4px;
+  font-family: Verdana, sans-serif;
+  font-size: small;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.scheduledFiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.scheduledFiles li {
+  padding: 2px 8px;
+  border: 1px solid var(--mail-border);
+  border-radius: 12px;
+}
+
+.scheduledError {
+  color: #b3261e;
+  font-size: 12px;
+}
+
+/* Awaiting reply tab: one column of sent emails with their actions inline. */
+.awaiting {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.awaitingList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+}
+
+.awaitingRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--mail-border);
+}
+
+.awaitingRow:last-child {
+  border-bottom: 0;
+}
+
+.awaitingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Breadcrumb account switcher: Home / Mail / [email ▾]. The breadcrumb clips
+   and truncates its items, so this one is allowed to show in full. */
+:global(.step-nav) span:has(> .accountSwitch) {
+  max-width: none;
+  overflow: visible;
+}
+
+/* Breadcrumb account switcher (rendered outside .app, so plain values). */
+.accountSwitch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: min(320px, 60vw);
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #e3e6ea;
+  border-radius: 8px;
+  background: #fff;
+  color: #14171f;
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+:global(html[data-theme='dark']) .accountSwitch {
+  border-color: var(--theme-elevation-200);
+  background: var(--theme-elevation-50);
+  color: var(--theme-elevation-1000);
+}
+
+.accountSwitch:hover,
+.accountSwitch[aria-expanded='true'] {
+  border-color: #2f80c4;
+}
+
+/* Connected account. */
+.accountSwitchDot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2fa36b;
+}
+
+.accountSwitch svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.accountSwitchLabel {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountMenu {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+  max-width: 340px;
+  padding: 6px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  color: var(--theme-elevation-1000);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  font-size: 14px;
+}
+
+.accountMenuRow {
+  display: flex;
+  align-items: center;
+}
+
+.accountMenuItem {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.accountMenuItem:hover,
+.accountMenuItem:focus-visible,
+.accountMenuAdd:hover,
+.accountMenuAdd:focus-visible {
+  background: var(--theme-elevation-50);
+}
+
+.accountMenuItemActive {
+  font-weight: 600;
+}
+
+.accountMenuCheck {
+  width: 14px;
+  color: #2c97c9;
+}
+
+.accountMenuEmail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountMenuTag {
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--theme-elevation-100);
+  color: var(--theme-elevation-600);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.accountMenuRemove {
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--theme-elevation-500);
+  font: inherit;
+  cursor: pointer;
+}
+
+.accountMenuRemove:hover,
+.accountMenuRemove:focus-visible {
+  background: var(--theme-elevation-50);
+  color: #e5484d;
+}
+
+.accountMenuAdd {
+  margin-top: 4px;
+  padding: 8px;
+  border: 0;
+  border-top: 1px solid var(--theme-elevation-100);
+  border-radius: 0 0 6px 6px;
+  background: none;
+  color: #2c97c9;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.accountMenuAddForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 8px;
+  border-top: 1px solid var(--theme-elevation-100);
+}
+
+.accountMenuAddInput {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: inherit;
+  font: inherit;
+}
+
+.accountMenuAddGo {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #2c97c9;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.accountMenuAddForm .accountMenuNote {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.accountMenuNote {
+  margin: 4px 8px;
+  color: var(--theme-elevation-500);
+  font-size: 13px;
+}
+
+/* ── Phones (≤768px): scrolling folder tabs, overflow menu, compose FAB, stacked error ── */
+.overflow {
+  position: relative;
+}
+
+.overflowMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  width: max-content;
+  max-width: min(360px, calc(100vw - 24px));
+  padding: 4px;
+  border: 1px solid var(--mail-border);
+  border-radius: 8px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Opens above its button (the bottom action bar); long menus scroll instead
+   of leaving the screen. */
+.overflowMenu.overflowMenuUp {
+  top: auto;
+  bottom: calc(100% + 8px);
+  min-width: 230px;
+  max-height: min(60vh, 480px);
+  overflow-y: auto;
+}
+
+.overflowItem {
+  min-height: 44px;
+  white-space: nowrap;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--mail-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.overflowItem:hover,
+.overflowItem:focus-visible {
+  background: var(--mail-soft);
+}
+
+@media (max-width: 768px) {
+  .searchOption {
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  /* The phone header bar is black and forces white breadcrumb text, so the
+     white account pill rendered as a blank white box there. */
+  :global(.app-header) .accountSwitch {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
+  }
+
+  .tabbar {
+    gap: 8px;
+    height: 48px;
+  }
+
+  .tabSpacer,
+  .syncStatus {
+    display: none;
+  }
+
+  .tabActions {
+    gap: 8px;
+  }
+
+  .tabGroup[role='tablist'] {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  }
+
+  .tabGroup[role='tablist']::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 8px;
+  }
+
+  .overflowBtn {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  /* Phones: 16px above the home indicator, clear of --mailbox-corner-reserve-phone. */
+  .replyBar {
+    right: calc(12px + var(--mailbox-corner-reserve-phone, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .composeFab {
+    position: fixed;
+    right: 16px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    z-index: 55;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 22px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  .error {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .errorConnect {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    background: var(--mail-accent);
+    border-color: var(--mail-accent);
+    color: #fff;
+  }
+
+  .errorDismiss {
+    align-self: center;
+    font-size: 12px;
+  }
+}
+
+/* TLDR: a private read-out under one email. Kept visually apart from the
+   compose window so it never reads as part of a reply. */
+.tldr {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 12px;
+  scroll-margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px dashed var(--mail-border);
+  border-radius: 8px;
+  background: var(--mail-soft);
+}
+
+.tldrHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.tldrHead > button {
+  margin-inline-start: auto;
+}
+
+.tldrSummary {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tldrLabel {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tldrList {
+  margin: 0;
+  padding-inline-start: 20px;
+  line-height: 1.5;
+}
+
+.tldrReply {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.tldrReply:hover {
+  border-color: var(--mail-accent);
+}
+
+.tldrReplyHint {
+  color: var(--mail-accent);
+  font-size: 12px;
+}
+
+.tldrAsk {
+  align-self: flex-start;
+}
+
+/* Ask AI: private Q&A about the open thread, styled like the TLDR box. */
+.askTurn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.askQuestion {
+  margin: 0;
+  font-weight: 600;
+}
+
+.askAnswer {
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.askForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Attachments under an email: one download button per file. */
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 280px;
+  padding: 6px 10px;
+  border: 1px solid var(--mail-border);
+  border-radius: 6px;
+  background: var(--theme-elevation-0);
+  color: var(--mail-text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.attachment:hover {
+  border-color: var(--mail-accent);
+}
+
+.attachment:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.attachmentName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachmentSize {
+  flex-shrink: 0;
+  color: var(--mail-muted);
+}

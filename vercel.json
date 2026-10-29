@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/mail/schedule/tick", "schedule": "* * * * *" },
+    { "path": "/api/mail/follow-ups/cron", "schedule": "0 * * * *" },
+    { "path": "/api/mail/sync/cron", "schedule": "30 3 * * *" }
+  ]
+}
