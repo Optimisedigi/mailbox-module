@@ -121,6 +121,14 @@ npm run build && npm start
 
 Elsewhere, use any scheduler, e.g. `curl -H "Authorization: Bearer $CRON_SECRET" https://your-app/api/mail/schedule/tick`.
 
+> [!IMPORTANT]
+> **Vercel's free (Hobby) plan can't run these schedules.** Hobby only allows cron jobs that run once a day (and only within the scheduled hour), and **a deploy whose `vercel.json` has a more frequent schedule fails**. The `vercel.json` in this repo runs a job every minute and one every hour, so as it stands it only deploys on Vercel Pro or Enterprise. On Hobby, either:
+>
+> - keep only the daily sync in `vercel.json` (remove the `schedule/tick` and `follow-ups/cron` entries) and call those two routes from an external scheduler (any cron service, or a GitHub Actions schedule) with the `Authorization: [REDACTED] header, or
+> - remove the `crons` block entirely and schedule all three externally.
+>
+> Without the minute job, scheduled emails don't go out; without the hourly job, "remind me if no reply" never fires. Limits are from Vercel's [cron usage and pricing docs](https://vercel.com/docs/cron-jobs/usage-and-pricing), checked October 2026.
+
 **Deploying.** Any Node host that runs Next.js works. Request bodies carry attachments, so the host must accept bodies of at least 4.5 MB (Mail caps them at 3 MB of files). Set every required variable, add the production redirect URIs in Google Cloud, and point a scheduler at the cron routes.
 
 ## Project structure
