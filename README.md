@@ -8,8 +8,8 @@ It runs as a standalone app (this repo) or drops into an existing Payload + Next
 > **This module does nothing on its own. It needs external services you set up yourself:**
 >
 > - **A Google Cloud project** with the Gmail API (and optionally the Calendar API) enabled and an OAuth client. Without it, Mail cannot read or send email. → [docs/google-cloud.md](docs/google-cloud.md)
-> - **At least one AI provider** (an API key, or one of the subscription OAuth logins) for Write with AI, TLDR, triage and summaries. → [docs/ai-auth.md](docs/ai-auth.md)
-> - **OpenAI Realtime access** (a ChatGPT plan via Codex OAuth, or `OPENAI_API_KEY`) for voice drafting.
+> - **Access to the AI model of your choice** for Write with AI, TLDR, Ask AI, triage and summaries. → [docs/ai-auth.md](docs/ai-auth.md)
+> - **OpenAI Realtime access** for voice drafting.
 > - **A scheduler** that calls the cron routes, for scheduled send, follow-up reminders and the daily sync.
 >
 > Mail reads and sends real email from real accounts. Test with a mailbox you can afford to make mistakes in.
@@ -66,7 +66,7 @@ npm run dev
 Open http://localhost:3000, create the first (admin) user, then:
 
 1. **Connect Gmail**: Mail shows a *Connect Gmail* button (or use **AI Auth → Gmail connection**).
-2. **Pick an AI model**: **Mail Settings** in the admin (or set `MAIL_AI_MODEL`).
+2. **Pick your AI model**: **Mail Settings → Email assistant model**. No model is chosen for you.
 3. Optional: **Google Calendar** global → *Connect Google Calendar*; **AI Auth** → connect a subscription login.
 4. Optional: add clients under **Clients** (name, website, contact emails) so emails are matched.
 
@@ -82,7 +82,7 @@ Everything is set with environment variables. Nothing secret is in the code; `.e
 | `DATABASE_URL` | Where the app keeps its own data. Your email stays in Gmail; the database holds the users and their logins, each user's Gmail connection (tokens), the client emails Mail files and summarises, scheduled emails, follow-up reminders, notifications and settings. `file:./mailbox.db` is a local SQLite file; on serverless hosts (Vercel and similar) the disk is wiped between requests, so use a hosted libSQL database such as Turso (`libsql://…`) with `DATABASE_AUTH_TOKEN`. |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Your Google Cloud OAuth client. Users sign in to Gmail (and Calendar) through it. See [docs/google-cloud.md](docs/google-cloud.md). |
 | `GMAIL_REDIRECT_URI` | Where Google sends users back after signing in: `https://<your app>/api/gmail/callback`. Must be listed exactly in the OAuth client. |
-| One AI provider | `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `KIMI_API_KEY`, `MINIMAX_API_KEY`, `MIMO_API_KEY` or `XAI_API_KEY`, plus `MAIL_AI_MODEL` set to one of that provider's models (e.g. `claude-sonnet-5.5`). Without one, the AI buttons fail but reading and sending still work. See [docs/ai-auth.md](docs/ai-auth.md). |
+| Your AI model of choice | Mail connects to the AI model you choose. Add that provider's credentials to your environment, then pick the model in **Mail Settings**. Until a model is picked, the AI buttons say so; reading and sending still work. See [docs/ai-auth.md](docs/ai-auth.md). |
 
 ### Optional
 
@@ -90,8 +90,7 @@ Everything is set with environment variables. Nothing secret is in the code; `.e
 | --- | --- |
 | `DATABASE_AUTH_TOKEN` | Token for a hosted libSQL/Turso `DATABASE_URL`. |
 | `CRON_SECRET` | Protects the scheduled-job routes below. Needed for scheduled send, "remind me if no reply" and the daily client-email sync. |
-| `CRED_ENCRYPTION_KEY` | Only if you connect a subscription login (ChatGPT, Grok or Kimi) on the AI Auth page instead of an API key. Those logins give the app long-lived tokens, which are encrypted with this key before they are stored. 64 hex characters: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. |
-| `MAIL_AI_MODEL` | Default model for every Mail AI feature. Mail Settings in the admin overrides it. |
+| `CRED_ENCRYPTION_KEY` | Only if you connect a subscription login (ChatGPT, Grok or Kimi) on the AI Auth page. Those logins give the app long-lived tokens, which are encrypted with this key before they are stored. 64 hex characters: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. |
 | `MAIL_ORG_NAME`, `MAIL_ORG_DESCRIPTION`, `MAIL_LANGUAGE` | Who the AI writes for and in which spelling, e.g. `Acme Studio`, `a design studio in Melbourne`, `Australian English`. |
 | `MAIL_OWN_DOMAINS` | Your own email domains, comma-separated. They are never treated as a client's domain. |
 | `NEXT_PUBLIC_MAIL_TIME_ZONE` | Time zone for business days, schedule send and auto-refresh hours. Default `Australia/Sydney`. |
@@ -99,6 +98,12 @@ Everything is set with environment variables. Nothing secret is in the code; `.e
 | `GMAIL_ALT_CLIENT_ID`, `GMAIL_ALT_CLIENT_SECRET`, `GMAIL_ALT_DOMAINS`, `GMAIL_ALT_ACCOUNTS` (also `ALT2`, `ALT3`) | Extra Google OAuth clients, only for addresses your main client can't sign in (e.g. another company's Google Workspace). See [docs/google-cloud.md](docs/google-cloud.md#several-workspaces-extra-oauth-apps-optional). |
 
 In-app settings (admins): **Mail Settings** (AI model, house writing style, voice billing), **Google Calendar** (connect a calendar), **AI Auth** (subscription logins, provider status).
+
+## Client data (your CRM)
+
+In our own setup, Mail reads each client's details (start date, retainer, goals, what we've promised) from our internal client system, so the AI can use them when drafting and answering questions about a client. **That connection is not part of this repo**, and nothing here can reach our system or data.
+
+To do the same, connect the CRM or client list of your choice: Mail calls two optional hooks in `src/extensions/client-list.ts`, which you implement against your own system. Without them, Mail still matches emails to the clients in its built-in list (name, website, contacts). See [docs/client-list.md](docs/client-list.md).
 
 ## Running
 
@@ -155,7 +160,7 @@ docs/                           Setup and integration guides
 ## Documentation
 
 - [Google Cloud setup](docs/google-cloud.md): project, APIs, consent screen, OAuth client, redirect URIs.
-- [AI providers and AI OAuth](docs/ai-auth.md): API keys, subscription logins, voice billing, risks.
+- [AI model and AI OAuth](docs/ai-auth.md): connecting your model of choice, subscription logins, voice billing, risks.
 - [Calendar and connectors](docs/connectors.md): how Gmail, Calendar, AI and voice connect and what each one does.
 - [Integrating into another app](docs/integration.md): plugin, routes, users, access, styling.
 - [Client list extension (optional)](docs/client-list.md)

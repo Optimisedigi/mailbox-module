@@ -526,7 +526,7 @@ export default function AiAuthPage() {
           {" "}<strong>SuperGrok subscription</strong> (via the grok-cli proxy), not billed <code>XAI_API_KEY</code> tokens.
           Powers the <code>grok-4.6</code> model. This reuses the grok CLI's
           private OAuth client against an undocumented endpoint — a ToS grey area xAI can break at any time — so any
-          failure falls through the normal fallback chain (Kimi → Claude → MiniMax).
+          failure shows as an error on that request.
         </p>
         <button onClick={handleGrokBegin} disabled={grokPolling} style={{ ...buttonStyle, opacity: grokPolling ? 0.5 : 1 }}>
           {grokPolling ? "Waiting for approval…" : "Begin login"}

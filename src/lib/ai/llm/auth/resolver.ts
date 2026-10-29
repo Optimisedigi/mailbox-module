@@ -10,13 +10,12 @@
  *   2. If step 1 threw (token revoked, refresh failed, OAuth-endpoint
  *      network error), DO NOT silently fall through to the env API key.
  *      Log an oauth-failed event to the activity log and throw
- *      OAuthFailedError. The agent loop classifies this as non-retryable
- *      and walks down fallbackModels (typically Kimi -> MiniMax).
+ *      OAuthFailedError (non-retryable).
  *   3. If no OAuth credential is stored for this provider (i.e. OAuth was
  *      never connected, not a failure), use the env-var API key with
  *      source='api-key'. This is a chosen path, not a fallback.
  *   4. If neither OAuth nor API key is available, throw NoCredentialError;
- *      the agent loop walks down the chain.
+ *      the request fails with that error.
  *
  * Why the asymmetry: OAuth being silently swapped for billed Anthropic API
  * was a footgun (silent cost surprise, user couldn't see when it happened).

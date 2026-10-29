@@ -177,14 +177,6 @@ export function isCanonicalModel(name: string): name is CanonicalModelName {
   return name in MODEL_REGISTRY;
 }
 
-/** Default model and fallback chain for Mail AI calls (see docs/ai-auth.md). */
-export const DEFAULT_AUTONOMOUS_MODEL: CanonicalModelName = "kimi-k3";
-export const DEFAULT_AUTONOMOUS_FALLBACKS: CanonicalModelName[] = [
-  "kimi-k3",
-  "claude-sonnet-5.5",
-  "minimax-m3",
-];
-
 /**
  * Models offered in Mail Settings → Email assistant model, in dropdown order.
  */
@@ -202,7 +194,7 @@ export const CHAT_PICKER_MODELS: ReadonlyArray<{
   { canonical: "claude-sonnet-5.5", label: "Claude Sonnet 5.5 (API key)", hint: "Billed to ANTHROPIC_API_KEY." },
   { canonical: "claude-opus-5.5", label: "Claude Opus 5.5 (API key)", hint: "Latest Opus. Billed to ANTHROPIC_API_KEY." },
   { canonical: "claude-haiku-5.5", label: "Claude Haiku 5.5 (API key)", hint: "Fastest Claude. Billed to ANTHROPIC_API_KEY." },
-  { canonical: "kimi-k3", label: "Kimi K3 (Kimi OAuth)", hint: "Kimi's flagship. Long-horizon coding, up to 1M context. Default model. Reasoning is always on for K3. No API tokens billed.", requiresReasoning: true },
+  { canonical: "kimi-k3", label: "Kimi K3 (Kimi OAuth)", hint: "Kimi's flagship. Long-horizon coding, up to 1M context. Reasoning is always on for K3. No API tokens billed.", requiresReasoning: true },
   { canonical: "kimi-for-coding", label: "Kimi For Coding (Kimi OAuth)", hint: "Kimi K2.7 Code via device-code OAuth. No API tokens billed." },
   { canonical: "minimax-m3", label: "MiniMax M3", hint: "Latest MiniMax fallback for agentic workflows." },
   { canonical: "mimo-v2.6-pro", label: "MiMo V2.6 Pro (API key)", hint: "Xiaomi flagship. Billed to MIMO_API_KEY; requires an API key." },

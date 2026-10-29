@@ -5,8 +5,8 @@
  * Codex CLI OAuth client + the private `chatgpt.com/backend-api/codex/responses`
  * endpoint, instead of a billed OPENAI_API_KEY. This is the "Sign in with
  * ChatGPT" subscription-reuse pattern. OpenAI can revoke tokens, rotate the client id, or change the server-side
- * Codex-prompt check at any time. The resolver + callLLM fallback chain means
- * any failure here walks down fallbackModels (Kimi -> MiniMax -> Claude).
+ * Codex-prompt check at any time; a failure then shows as an error on that
+ * AI request and on the AI Auth page.
  *
  * Adapted from gg-framework (MIT, see THIRD_PARTY_NOTICES.md). It is the
  * standard browser PKCE flow the Codex CLI uses by default — NOT the device-code flow, which requires an

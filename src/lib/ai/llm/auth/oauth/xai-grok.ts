@@ -17,8 +17,7 @@
  * gates the accounts.x.ai OAuth surface other tools use.
  *
  * xAI can rotate the client id, the proxy contract, or revoke tokens at any
- * time; the resolver + callLLM fallback chain means any failure here walks
- * down fallbackModels (Kimi -> MiniMax -> Claude).
+ * time; a failure then shows as an error on that AI request and on AI Auth.
  *
  * Flow:
  *   1. POST https://auth.x.ai/oauth2/device/code  client_id + scope

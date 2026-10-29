@@ -23,7 +23,6 @@ vi.mock("@/lib/user-gmail-tokens", () => ({
 }));
 const mockCallLLM = vi.fn();
 vi.mock("@/lib/ai/llm", () => ({ callLLM: (...args: unknown[]) => mockCallLLM(...args) }));
-vi.mock("@/lib/ai/llm/registry", () => ({ DEFAULT_AUTONOMOUS_FALLBACKS: [] }));
 const mockSettings = vi.fn(async () => ({ emailAssistantModel: "email-model", writingStyle: "- **email-tone**: STYLE-RULE-NO-SIGNOFF", voiceApiKeyEnabled: false }));
 vi.mock("@/lib/ai/mail-ai-settings", () => ({ getMailAiSettings: () => mockSettings() }));
 
@@ -344,6 +343,18 @@ describe("house writing style and model", () => {
     expect(call.system).toContain("STYLE-RULE-NO-SIGNOFF");
     expect(call.model).toBe("email-model");
     expect(mockSettings).toHaveBeenCalled();
+  });
+
+  it("uses only the chosen model, and refuses without calling any model when none is chosen", async () => {
+    const { POST } = await import("@/app/(frontend)/api/mail/ai/route");
+    await POST(post("/api/mail/ai", { action: "reply", gmailMessageId: "selected", instruction: "ok" }));
+    expect((mockCallLLM.mock.calls[0]![0] as { fallbackModels?: unknown }).fallbackModels).toBeUndefined();
+    mockCallLLM.mockClear();
+    mockSettings.mockResolvedValueOnce({ emailAssistantModel: null, writingStyle: "", voiceApiKeyEnabled: false } as never);
+    const res = await POST(post("/api/mail/ai", { action: "reply", gmailMessageId: "selected", instruction: "ok" }));
+    expect(res.status).toBeGreaterThanOrEqual(400);
+    expect((await res.json()).error).toMatch(/No AI model is chosen yet/);
+    expect(mockCallLLM).not.toHaveBeenCalled();
   });
 
   it("does not add the writing style to timeline summaries", async () => {

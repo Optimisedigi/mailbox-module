@@ -1,6 +1,5 @@
 import type { Payload } from "payload";
 import { callLLM } from "@/lib/ai/llm";
-import { DEFAULT_AUTONOMOUS_FALLBACKS } from "@/lib/ai/llm/registry";
 import { getMailAiSettings } from "@/lib/ai/mail-ai-settings";
 import type { MailModelRequest } from "./model-request";
 
@@ -15,8 +14,8 @@ export function emailStyleBlock(writingStyle: string): string {
 }
 
 /**
- * Runs one Mail model request through callLLM with the Mail Settings model
- * (falling back along DEFAULT_AUTONOMOUS_FALLBACKS) and writes one
+ * Runs one Mail model request through callLLM with the model chosen in Mail
+ * Settings (no other model is tried) and writes one
  * mail-ai-requests audit row per call: action, the single Gmail id, the
  * email count, the model and, when client data was opted in, the client id.
  * Email content and client facts are never logged.
@@ -47,6 +46,9 @@ export async function runMailModel(args: {
 
   const settings = await getMailAiSettings(payload);
   const model = settings.emailAssistantModel;
+  if (!model) {
+    throw new Error("No AI model is chosen yet. An admin can pick one in Mail Settings → Email assistant model.");
+  }
   // Summaries, TLDRs, subject lines and triage are short factual outputs: no house writing style.
   const factual =
     request.action === "summarise" ||
@@ -60,7 +62,6 @@ export async function runMailModel(args: {
   try {
     const response = await callLLM({
       model,
-      fallbackModels: DEFAULT_AUTONOMOUS_FALLBACKS,
       maxTokens: request.maxTokens ?? 2000,
       // Summaries and targeted revisions should stay close to the source; new drafts get some variety.
       temperature: request.temperature ?? (factual || request.revise ? 0.2 : 0.5),

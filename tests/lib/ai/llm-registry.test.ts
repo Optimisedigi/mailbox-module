@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   CHAT_PICKER_MODELS,
-  DEFAULT_AUTONOMOUS_FALLBACKS,
   MODEL_REGISTRY,
   PROVIDER_CONFIG,
 } from "@/lib/ai/llm/registry";
@@ -27,12 +26,5 @@ describe("model registry", () => {
     for (const [name, entry] of Object.entries(MODEL_REGISTRY)) {
       expect(PROVIDER_CONFIG[entry.provider], name).toBeDefined();
     }
-  });
-
-  it("uses active subscription models before billed API fallbacks", () => {
-    expect(DEFAULT_AUTONOMOUS_FALLBACKS.slice(0, 2)).toEqual([
-      "kimi-k3",
-      "claude-sonnet-5.5",
-    ]);
   });
 });

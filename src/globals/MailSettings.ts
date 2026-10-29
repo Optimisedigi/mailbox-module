@@ -4,7 +4,7 @@ import { CHAT_PICKER_MODELS } from "../lib/ai/llm/registry";
 /**
  * Mail AI settings: which model writes and summarises email, the house
  * writing style for drafts, and how voice drafting is billed.
- * MAIL_AI_MODEL is the default model when none is picked here.
+ * Mail's AI features stay off until a model is picked here.
  */
 export const MailSettings: GlobalConfig = {
   slug: "mail-settings",
@@ -21,7 +21,7 @@ export const MailSettings: GlobalConfig = {
       options: CHAT_PICKER_MODELS.map((model) => ({ label: model.label, value: model.canonical })),
       admin: {
         description:
-          "Model for Write with AI, TLDR, triage and summaries. Empty: MAIL_AI_MODEL, else the default fallback chain.",
+          "The AI model Mail uses for Write with AI, TLDR, Ask AI, triage and summaries. Add that provider's credentials first (see AI Auth). Until one is picked, the AI buttons explain that no model is chosen.",
       },
     },
     {

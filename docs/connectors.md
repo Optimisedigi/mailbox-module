@@ -6,7 +6,7 @@ Mail has four connectors. Each is independent: Mail works with only Gmail connec
 | --- | --- | --- | --- | --- |
 | Gmail | per user, per account | `users` (main) / `mail-accounts` (extra) | each user | Mail shows *Connect Gmail*; nothing else works. |
 | Google Calendar | one shared Google account | `calendar-auth` global | an admin | Invite answers only email the organiser; *Add calendar invite* says Calendar isn't connected. |
-| AI providers | app-wide | env keys / encrypted `ai-credentials` | an admin | AI buttons return an error; reading and sending still work. |
+| Your AI model | app-wide | your provider's credentials / encrypted `ai-credentials` | an admin | AI buttons say no model is chosen; reading and sending still work. |
 | OpenAI Realtime (voice) | app-wide | as AI providers | an admin | The mic shows an error; typing still works. |
 
 ## Gmail
